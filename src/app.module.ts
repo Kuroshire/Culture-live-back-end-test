@@ -3,6 +3,8 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { CustomerModule } from './customer/customer.module';
+import { FilmModule } from './film/film.module';
+import { RentalModule } from './rental/rental.module';
 
 @Module({
   imports: [
@@ -17,6 +19,8 @@ import { CustomerModule } from './customer/customer.module';
       synchronize: true, // À désactiver en production
     }),
     CustomerModule,
+    FilmModule,
+    RentalModule,
   ],
   controllers: [AppController],
   providers: [AppService],
