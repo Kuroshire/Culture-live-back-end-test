@@ -1,10 +1,15 @@
-class EmailService {
-  sendEmail(from: string, to: string, subject: string, content: string) {
-    console.log(`Email sent from ${from} to ${to}`);
-    console.log(`Subject: ${subject}`);
-    console.log(`Content: ${content}`);
+import { Injectable } from '@nestjs/common';
+@Injectable()
+export class EmailService {
+  async sendEmail(emailInfos: EmailInfos) {
+    console.log('Email sent to: ', emailInfos.to);
+    console.log('Subject: ', emailInfos.subject);
+    console.log('Text: ', emailInfos.text);
   }
 }
 
-const emailService = new EmailService();
-export default emailService;
+export interface EmailInfos {
+  to: string;
+  subject: string;
+  text: string;
+}

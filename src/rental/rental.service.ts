@@ -9,13 +9,17 @@ import {
   GetDayAtMidDay,
 } from 'src/utils/date.utils';
 import { FilmService } from 'src/film/film.service';
+import { ScheduledTaskService } from 'src/scheduled-task/scheduled-task.service';
+import { CustomerService } from 'src/customer/customer.service';
 
 @Injectable()
 export class RentalService {
   constructor(
     @InjectRepository(Rental)
     private readonly rentalRepository: Repository<Rental>,
+    private readonly customerService: CustomerService,
     private readonly filmService: FilmService,
+    private readonly scheduledTaskService: ScheduledTaskService,
   ) {}
 
   async create(createRentalDto: CreateRentalDto): Promise<Rental> {
@@ -38,14 +42,30 @@ export class RentalService {
     const rental = this.rentalRepository.create(createRentalDto);
 
     //add planified tasks for J-5 & J-3
-    console.log(
-      'Task planned for J-5: ',
-      GetDateMinusDays(GetDayAtMidDay(returnDate), 5),
+    const customer = await this.customerService.findOne(
+      createRentalDto.customerId,
     );
-    console.log(
-      'Task planned for J-3: ',
-      GetDateMinusDays(GetDayAtMidDay(returnDate), 3),
-    );
+    const returnJMinus5 = GetDateMinusDays(returnDate, 5);
+    const returnJMinus3 = GetDateMinusDays(returnDate, 3);
+
+    //on ne veut pas faire de cron si le J-5 se trouve avant la date de début d'emprunt
+    if (rentalDate < returnJMinus5) {
+      await this.scheduledTaskService.create({
+        taskName: 'SendReminderJMinus5',
+        emailToNotify: customer.email,
+        dateToComplete: GetDayAtMidDay(returnJMinus5),
+      });
+    }
+
+    //idem, on ne veut pas faire de cron si le J-3 se trouve avant la date de début d'emprunt
+    if (rentalDate < returnJMinus3) {
+      await this.scheduledTaskService.create({
+        taskName: 'SendReminderJMinus3',
+        emailToNotify: customer.email,
+        dateToComplete: GetDayAtMidDay(returnJMinus3),
+      });
+    }
+
     return this.rentalRepository.save(rental);
   }
 

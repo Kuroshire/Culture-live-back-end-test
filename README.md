@@ -39,22 +39,17 @@ Le projet propose un **CRUD complet** pour les **trois tables** (`Rental`, `Cust
 ✅ **Propagation des modifications/suppressions** (ex : suppression d'un film/customer → suppression des rentals associés)  
 ✅ **Récupération de la liste (complète) des locations**  
 ✅ **Récupération des locations par `customerId`**  
+✅ **Implémentation d'un service d'envoi d'email (factice, avec des logs)**  
+✅ **Ajout d'une 4e table `ScheduledTask`, qui représente en DB les emails envoyés aux clients, avec un status indiquant s'ils sont en attentes d'envoi ou déjà envoyés.**  
+✅ **Ajout automatique de 2 tâches planifiées à la création d'une entité rental en DB pour J-3 et J-5 (_NOTE: chacune des ces taches n'est crée que si elle fait sens. Exemple: On n'enverra pas de mail pour J-5 si la location ne dure que 4 jours._)**  
+✅ **Possibilité de récupérer une liste complète de toutes les tâches planifiées qui n'ont pas encore été envoyées**  
+✅ **Méthode permettant d'executer manuellement une tâche planifiée en fournissant l'id de cette dernière (elle sera executée automatiquement au prochain passage du cron)**  
 
 ⚠️ **Problème actuel**  
 Actuellement, il est possible d'effectuer une **location (rental) sur une période où le film est déjà loué**.  
 Ce problème vient du fait qu’aucune vérification n'est effectuée pour s’assurer que le film est bien **disponible** avant de l'ajouter dans un `rental`.  
 
----
-
-## 🚀 Reste à faire  
-
-🔹 **Gestion des tâches planifiées avec `@nest/schedule`**  
-🔹 **Envoi de notifications avec `@nestjs/schedule`**  
-   - Commencer par une notification manuelle
-   - Ajouter des tâches automatiques (prévenir le customer J-5 et J-3 avant la fin de la location). Ces tâches seront créées au moment ou l'ont crée la nouvelle ligne dans rental.
-   - Ajouter une route permettant de voir la liste des tâches en cours.
-
-### 🎯 Bonus  
+### 🎯 Bonus - Point à rajouter dans le projet  
 ➕ **Stocker les informations de la DB dans un fichier `.env`**  
-➕ **Initialiser la base de données avec des données de base**  
+➕ **Initialiser la base de données avec des données prédéfinis**  
 ➕ **Ajouter des tests unitaires et fonctionnels sur les fonctionnalités existantes**  

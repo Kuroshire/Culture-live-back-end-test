@@ -11,6 +11,12 @@ export function GetDateMinusDays(date: Date, days: number) {
   return dateToReturn;
 }
 
+export function GetDatePlusDays(date: Date, days: number) {
+  const dateToReturn = new Date(date);
+  dateToReturn.setDate(date.getDate() + days);
+  return dateToReturn;
+}
+
 export function GetDayAtMidDay(date: Date) {
   const dateToReturn = new Date(date);
   dateToReturn.setUTCHours(12, 0, 0, 0);
