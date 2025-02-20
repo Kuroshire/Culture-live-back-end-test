@@ -22,3 +22,12 @@ export function GetDayAtMidDay(date: Date) {
   dateToReturn.setUTCHours(12, 0, 0, 0);
   return dateToReturn;
 }
+
+export function GetDayAtGivenHour(date: Date, givenHour: number) {
+  const dateToReturn = new Date(date);
+  if (givenHour < 0 || givenHour > 23) {
+    throw new Error('Given hour must be between 0 and 23');
+  }
+  dateToReturn.setUTCHours(givenHour, 0, 0, 0);
+  return dateToReturn;
+}

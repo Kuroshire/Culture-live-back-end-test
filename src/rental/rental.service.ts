@@ -3,11 +3,7 @@ import { CreateRentalDto } from './dto/create-rental.dto';
 import { Rental } from './entities/rental.entity';
 import { DeleteResult, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  DaysBetweenDates,
-  GetDateMinusDays,
-  GetDayAtMidDay,
-} from 'src/utils/date.utils';
+import { DaysBetweenDates } from 'src/utils/date.utils';
 import { FilmService } from 'src/film/film.service';
 import { ScheduledTaskService } from 'src/scheduled-task/scheduled-task.service';
 import { CustomerService } from 'src/customer/customer.service';
@@ -45,26 +41,7 @@ export class RentalService {
     const customer = await this.customerService.findOne(
       createRentalDto.customerId,
     );
-    const returnJMinus5 = GetDateMinusDays(returnDate, 5);
-    const returnJMinus3 = GetDateMinusDays(returnDate, 3);
-
-    //on ne veut pas faire de cron si le J-5 se trouve avant la date de début d'emprunt
-    if (rentalDate < returnJMinus5) {
-      await this.scheduledTaskService.create({
-        taskName: 'SendReminderJMinus5',
-        emailToNotify: customer.email,
-        dateToComplete: GetDayAtMidDay(returnJMinus5),
-      });
-    }
-
-    //idem, on ne veut pas faire de cron si le J-3 se trouve avant la date de début d'emprunt
-    if (rentalDate < returnJMinus3) {
-      await this.scheduledTaskService.create({
-        taskName: 'SendReminderJMinus3',
-        emailToNotify: customer.email,
-        dateToComplete: GetDayAtMidDay(returnJMinus3),
-      });
-    }
+    await this.scheduledTaskService.scheduleReminder(rental, customer);
 
     return this.rentalRepository.save(rental);
   }

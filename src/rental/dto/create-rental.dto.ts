@@ -3,6 +3,7 @@ import {
   IsDateString,
   MinDate,
   Validate,
+  ValidateIf,
   ValidationArguments,
   ValidatorConstraint,
   ValidatorConstraintInterface,
@@ -50,6 +51,7 @@ export class CreateRentalDto {
 
   @IsDateString()
   @MinDate(new Date(), { message: 'Return date cannot be in the past' })
+  @ValidateIf((dto, returnDate) => dto.rentalDate >= returnDate)
   returnDate: Date;
 
   @Validate(IsCustomerExistsConstraint)
